@@ -1,0 +1,85 @@
+create table usermaster (username varchar(20) primary key ,
+password varchar(20),
+usertype int ,
+name varchar(20),
+phone varchar(20));
+
+
+insert into usermaster(username,password,usertype,name,phone ) values ('admin','admin',0,null,null);
+
+create table theater (theatercode int primary key ,name varchar(30), location varchar(100));
+
+create table hall (hallcode int primary key , theatercode int, hallname varchar(20));
+create table seat (seatcode int primary key , hallcode int, seatname varchar(10), price int , status int);
+
+create table movie (moviecode int primary key , name varchar(50) , genere varchar(50),
+ casts varchar(50), status int);
+
+create table show (showcode int primary key , starttime double , endtime double );
+
+create table layoutplan (uniquelayoutplancode int primary key,
+groupplancode int , seatcode int, status int, bookingstatus int,
+plandate varchar(20), starttime double, endtime double, moviecode int);
+
+create table snack (snackcode int primary key , name varchar(20) , price int );
+
+create table bookingseat(
+bookingcode int primary key,
+custname varchar(20),
+contactno varchar(20),
+idprooftype varchar(20),
+idproofno varchar(20),
+paystatus int);
+
+
+create table bookingseatdetail (bookingseatcode int primary key , bookingcode int ,uniquelayoutplancode int, price int );
+
+create table bookingsnack(bookingsnackcode int primary key , bookingcode int ,
+snackcode int, quantity int, price int, totalprice int);
+
+create table paymentdetail(paymentcode int primary key , bookingcode int ,
+cardholder varchar(20), ccno varchar(20), cvno varchar(20), validupto varchar(20),
+amount int);
+
+
+create view layoutplanhallview
+as
+SELECT layoutplan.*, Hall.hallcode, hall.hallname, seat.seatname, seat.price,
+theater.name
+FROM Theater INNER JOIN (Hall INNER JOIN 
+(seat INNER JOIN layoutplan ON seat.seatcode = layoutplan.seatcode)
+ ON Hall.hallcode = seat.hallcode) 
+ON Theater.theatercode = Hall.theatercode
+order by hallcode, groupplancode, layoutplan.seatcode;
+
+
+create table booksnacktemp (tempid int primary key,bookingcode int, snackcode int , quantity int,price int,
+totalprice int
+);
+create table snackpayment (paymentcode int primary key , bookingcode int ,
+cardholder varchar(20), ccno varchar(20), cvno varchar(20), validupto varchar(20),
+amount int);
+
+create table users(
+userid varchar(255) not null primary key,
+password varchar(255) not null
+);
+
+create table users_groups ( 
+groupid varchar(20) not null primary key,
+userid varchar(255) not null
+);
+
+create table logger
+(
+username varchar(20),
+usertype int,
+recorddate varchar(30),
+action varchar(30)
+);
+
+insert into users values('admin' , 'admin');
+insert into users values('pos', 'pos');
+insert into users_groups values('admin' , 'admin');
+insert into users_groups values('pos', 'pos');
+
